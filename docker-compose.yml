@@ -3,6 +3,8 @@ services:
    db:
      image: percona:8
      container_name: db
+     volumes:
+       - db_data:/var/lib/mysql
      restart: always
      environment:
        MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
@@ -12,8 +14,9 @@ services:
 
    app:
      image: wordpress:latest
-     container_name: app
      restart: always
+     volumes:
+       - wp-content:/var/www/html/wp-content
      environment:
        WORDPRESS_DB_HOST: db:3306
        WORDPRESS_DB_USER: "${APP_USERNAME}"
@@ -23,6 +26,9 @@ services:
        - db
      links:
        - db
+     deploy:
+       mode: replicated
+       replicas: 2
 
    nginx:
      image: nginx:latest
@@ -42,4 +48,6 @@ services:
        - app
      links:
        - app
-    
+volumes:
+  db_data: {}
+  wp-content: {}   
