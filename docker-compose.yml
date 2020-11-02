@@ -2,7 +2,7 @@ version: '3.6'
 services:
   nginx:
     image: nginx:latest
-    container_name: ${APP_NAME}-nginx
+    container_name: nginx-proxy
     ports:
       - '80:80'
       - '443:443'
@@ -22,13 +22,15 @@ services:
     volumes:
        - './data/db:/var/lib/mysql:delegated'
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD}"
+      MYSQL_DATABASE: "${DB_NAME}"
     restart: always
     ports:
       - '3306:3306'
 
   app:
     image: wordpress:latest 
+    container_name: app
     ports:
       - 80
     volumes:
